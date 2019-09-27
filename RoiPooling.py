@@ -27,7 +27,8 @@ class RoiPooling(Layer):
 
     def __init__(self, pool_list, num_rois, **kwargs):
 
-        self.dim_ordering = K.image_dim_ordering()
+        #self.dim_ordering = K.image_dim_ordering()
+        self.dim_ordering = 'th'
         assert self.dim_ordering in {'tf', 'th'}, 'dim_ordering must be in {tf, th}'
 
         self.pool_list = pool_list

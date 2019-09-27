@@ -1,6 +1,9 @@
 from __future__ import division
 from __future__ import print_function
 
+import keras
+print(keras.__version__)
+
 from keras.layers import Lambda, Dense, TimeDistributed, Input
 from keras.models import Model
 from keras.preprocessing import image
@@ -34,7 +37,7 @@ def rmac(input_shape, num_rois):
 
     #load ResNet101
     resnet101_model = resnet.ResNet101(include_top=True, weights='imagenet', input_tensor=None, input_shape=(3, 224, 224),
-                                        pooling=None, classes=1000)
+                                        pooling=None, classes=1000, backend=keras.backend, layers=keras.layers, models=keras.models, utils=keras.utils)
     # Load VGG16
     #vgg16_model = VGG16('', input_shape)
     # vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(3, 224, 224), pooling=None, classes=1000)
@@ -75,6 +78,7 @@ def rmac(input_shape, num_rois):
     model = Model([resnet101_model.input, in_roi], rmac_norm)
 
     # Load PCA weights
+    #todo pca layer is trained by data ???
     mat = scipy.io.loadmat(utils.DATA_DIR + utils.PCA_FILE)
     b = np.squeeze(mat['bias'], axis=1)
     w = np.transpose(mat['weights'])
