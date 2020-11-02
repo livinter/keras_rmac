@@ -26,13 +26,13 @@ def load_obj(filename):
 
 
 def preprocess_image(x):
-
+    x=x.transpose((0,3,1,2))
     # Substract Mean
     x[:, 0, :, :] -= 103.939
     x[:, 1, :, :] -= 116.779
     x[:, 2, :, :] -= 123.68
 
     # 'RGB'->'BGR'
-    x = x[:, ::-1, :, :]
+    #x = x[:, ::-1, :, :]
 
     return x

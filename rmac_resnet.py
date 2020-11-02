@@ -21,8 +21,6 @@ K.set_image_data_format('channels_first')
 SIZE = 512
 s_x, s_y, s_c = 224, 224, 3
 
-K.set_image_data_format('channels_first')
-
 def addition(x):
     return K.sum(x, axis=1)
 
@@ -92,7 +90,7 @@ def rmac(input_shape, num_rois):
 def check(img, regions, model):
     new_size = (s_y, s_x, 3)
     img.resize(new_size, refcheck=False)
-    x = image.img_to_array(img[:, :, ::-1])
+    x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = utils.preprocess_image(x)
     # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
@@ -118,7 +116,7 @@ if __name__ == "__main__":
     img = image.load_img(file)
 
     # Resize
-    scale = utils.IMG_SIZE / max(img.size)
+    #scale = utils.IMG_SIZE / max(img.size)
     # new_size = (int(np.ceil(scale * img.size[0])), int(np.ceil(scale * img.size[1])))
     new_size = (224, 224)
     print('Original size: %s, Resized image: %s' % (str(img.size), str(new_size)))
@@ -126,7 +124,7 @@ if __name__ == "__main__":
 
     # Mean substraction
     x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
+    #x = np.expand_dims(x, axis=0)
     x = utils.preprocess_image(x)
 
     print('Input data : %s, %s. %s' % (str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))

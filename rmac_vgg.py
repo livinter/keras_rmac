@@ -1,4 +1,5 @@
 import tensorflow as tf
+
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
@@ -46,11 +47,11 @@ def rmac(input_shape, num_rois):
     #    xxx = K.permute_dimensions(vgg16_model.layers[-5].output, (0, 3, 1, 2))
 
     # ROI pooling
-    #print('layer name : ' + vgg16_model.layers[-5].name)
-    #print(vgg16_model.layers[-5].output)
+    # print('layer name : ' + vgg16_model.layers[-5].name)
+    # print(vgg16_model.layers[-5].output)
     #    print(xxx)
     x = RoiPooling([1], num_rois)([vgg16_model.layers[-5].output, in_roi])
-    #print(x)
+    # print(x)
 
     # Normalization
     x = Lambda(lambda x: K.l2_normalize(x, axis=2), name='norm1')(x)
@@ -81,8 +82,6 @@ def rmac(input_shape, num_rois):
     return model
 
 
-
-
 def check(img, regions, model):
     # Load sample image
     # file = utils.DATA_DIR + 'sample.jpg'
@@ -95,8 +94,8 @@ def check(img, regions, model):
     # print('Original size: %s, Resized image: %s' %(str(img.size), str(new_size)))
     img.resize(new_size, refcheck=False)
     # img=np.transpose(img[:,:,::-1],(2,0,1))
-    # Mean substraction
-    x = image.img_to_array(img[:, :, ::-1])
+    # Mean subtractions
+    x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = utils.preprocess_image(x)
     # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
@@ -116,14 +115,14 @@ def load_RMAC():
     model = rmac((s_c, s_y, s_x), len(regions))
     return regions, model
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Load sample image
     file = utils.DATA_DIR + 'sample.jpg'
     img = image.load_img(file)
 
     # Resize
-    scale = utils.IMG_SIZE / max(img.size)
+    #scale = utils.IMG_SIZE / max(img.size)
     # new_size = (int(np.ceil(scale * img.size[0])), int(np.ceil(scale * img.size[1])))
     new_size = (224, 224)
     print('Original size: %s, Resized image: %s' % (str(img.size), str(new_size)))
@@ -138,7 +137,6 @@ if __name__ == "__main__":
 
     # Load RMAC model
     regions, model = load_RMAC()
-
 
     # Compute RMAC vector
     print('Extracting RMAC from image...')

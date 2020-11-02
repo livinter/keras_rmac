@@ -8,11 +8,12 @@ Then test new videos if they contain parts of the already trained videos.
 
 `python3 test.py --source [input video file] --detect 15`
 
-with the detect parameter you can control how sensitive you the frame detection should be.
+with the detect parameter you can control how sensitive the frame detection should be.
 
 
 On a GTX1080 Ti it takes 0.035sec to get am 128Byte hash from one frame.
-For training the standard value is 1 hash/second.
+Normally it is enough to just analyse on frame every 25 frames and only analyse 
+one frmame per second.
 The has is then converted into 50-200 keys with 10-24 bit, depending on the 
 amount of videos. The value at this keys is/are a reference to the 
 videos+position in the video. Querying those keys allows to match similar
