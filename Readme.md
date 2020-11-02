@@ -8,7 +8,16 @@ Then test new videos if they contain parts of the already trained videos.
 
 `python3 test.py [input video file] `
 
+On a GTX1080 Ti it takes 0.035sec to get am 128Byte hash from one frame.
+For training the standard value is 1 hash/second.
+The has is then converted into 50-200 keys of 10-24 bit, depending on the 
+amount of videos. The value at this keys is/are a reference to the 
+videos+position in the video. Querying those keys allows to match similar
+video+position just by lookup.
 
+Every frame for the best video+positon a stream is generated. 
+Those streams then are extended or discarged depending if further 
+video+position match. 
 
 
 Image detection based on Keras RMAC
