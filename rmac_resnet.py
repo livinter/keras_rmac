@@ -6,7 +6,8 @@ from tensorflow.keras.layers import Lambda, Dense, TimeDistributed, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing import image
 import tensorflow.keras.backend as K
-from keras_applications import resnet
+#from keras_applications import resnet
+from tensorflow.keras.applications import resnet
 
 from RoiPooling import RoiPooling
 from get_regions import rmac_regions, get_size_vgg_feat_map
@@ -20,6 +21,7 @@ K.set_image_data_format('channels_first')
 SIZE = 512
 s_x, s_y, s_c = 224, 224, 3
 
+K.set_image_data_format('channels_first')
 
 def addition(x):
     return K.sum(x, axis=1)
@@ -28,20 +30,16 @@ def addition(x):
 def weighting(input):
     x = input[0]
     w = input[1]
-    w = K.repeat_elements(w, 2048, axis=-1)
+    w = K.repeat_elements(w, SIZE, axis=-1)
     out = x * w
     return out
 
 
 def rmac(input_shape, num_rois):
     # load ResNet101
-    resnet101_model = resnet.ResNet101(include_top=True, weights='imagenet', input_tensor=None,
+    resnet101_model = resnet.ResNet101V2(include_top=True, weights='imagenet', input_tensor=None,
                                        input_shape=(3, 224, 224),
-                                       pooling=None, classes=1000,
-                                       backend=tensorflow.keras.backend,
-                                       layers=tensorflow.keras.layers,
-                                       models=tensorflow.keras.models,
-                                       utils=tensorflow.keras.utils)
+                                       pooling=None, classes=1000)
     # Load VGG16
     # vgg16_model = VGG16('', input_shape)
     # vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(3, 224, 224), pooling=None, classes=1000)
@@ -65,7 +63,7 @@ def rmac(input_shape, num_rois):
     x = Lambda(lambda x: K.l2_normalize(x, axis=2), name='norm1')(x)
 
     # PCA
-    x = TimeDistributed(Dense(2048, name='pca',
+    x = TimeDistributed(Dense(SIZE, name='pca',
                               kernel_initializer='identity',
                               bias_initializer='zeros'))(x)
 
@@ -73,7 +71,7 @@ def rmac(input_shape, num_rois):
     x = Lambda(lambda x: K.l2_normalize(x, axis=2), name='pca_norm')(x)
 
     # Addition
-    rmac = Lambda(addition, output_shape=(2048,), name='rmac')(x)
+    rmac = Lambda(addition, output_shape=(SIZE,), name='rmac')(x)
 
     # # Normalization
     rmac_norm = Lambda(lambda x: K.l2_normalize(x, axis=1), name='rmac_norm')(rmac)

@@ -12,6 +12,7 @@ for gpu in gpus:
 from rmac_hash import generate_hashs, store_hashs
 import rmac_hash
 from rmac_vgg import check, load_RMAC
+#from rmac_resnet import check, load_RMAC
 from utils import ptime
 
 if __name__ == "__main__":
