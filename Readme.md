@@ -1,5 +1,17 @@
-# Keras RMAC
+# Detect Videos in Videos
 
+Train some videos:
+
+`python3 train.py [input video file] `
+
+Then test new videos if they contain parts of the already trained videos.
+
+`python3 test.py [input video file] `
+
+
+
+
+Image detection based on Keras RMAC
 Re-implementation of Regional Maximum Activations of Convolutions (RMAC) feature extractor for Keras, based on (Tolias et al. 2016) and (Gordo et al. 2016). The architecture of the model is as in the image below:
 
 ![rmac](https://github.com/noagarcia/keras_rmac/blob/master/data/model.png?raw=true)
@@ -7,11 +19,10 @@ Re-implementation of Regional Maximum Activations of Convolutions (RMAC) feature
 RoiPooling code from: https://github.com/yhenon/keras-spp
 
 ## Prerequisites 
-This code requires Keras version 2.0 or greater.
-- [Python][1] (2.7)
+This code requires Tensorflow version 2.1 or greater.
+- [Python][1] (3.6+)
 - [Keras][2] (2.1.2)
-- [Theano][3] (0.9.0)
-- [VGG16 weights][4] --> download the file and save it in `data/` folder
+- [Tensorflow] (2.1.0)
 
 ## References
 
@@ -45,5 +56,3 @@ If using this code, please cite the paper where the re-implementation is used an
 
 [1]: https://www.python.org/download/releases/2.7/
 [2]: https://keras.io/
-[3]: http://deeplearning.net/software/theano_versions/0.9.X/
-[4]: https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg16_weights_th_dim_ordering_th_kernels.h5

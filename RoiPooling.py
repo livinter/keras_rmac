@@ -1,6 +1,5 @@
-from keras.engine.topology import Layer
-import keras.backend as K
-
+from tensorflow.keras.layers import Layer, InputSpec
+import tensorflow.keras.backend as K
 
 class RoiPooling(Layer):
     """ROI pooling layer for 2D inputs.

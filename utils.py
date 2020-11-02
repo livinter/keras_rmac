@@ -5,6 +5,10 @@ WEIGHTS_FILE = 'vgg16_weights_th_dim_ordering_th_kernels.h5'
 PCA_FILE = 'PCAmatrices.mat'
 IMG_SIZE = 1024
 
+import datetime
+def ptime(s):
+    return str(datetime.timedelta(seconds=int(s+0.5)))
+
 
 def save_obj(obj, filename):
     f = open(filename, 'wb')
