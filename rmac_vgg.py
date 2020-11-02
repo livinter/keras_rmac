@@ -1,5 +1,7 @@
-from __future__ import division
-from __future__ import print_function
+import tensorflow as tf
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
 import time
 from tensorflow.keras.layers import Lambda, Dense, TimeDistributed, Input
 from tensorflow.keras.models import Model
