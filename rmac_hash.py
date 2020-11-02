@@ -2,21 +2,23 @@ import random
 import numpy as np
 import pickle
 
-hash_file_name=r'hash_map.pkl'
+hash_file_name = r'hash_map.pkl'
 hash_map = {}
-id_file_name=r'file_name.pkl'
-id_map={}
+id_file_name = r'file_name.pkl'
+id_map = {}
 
-BIT_PAIRS = 10 # up to 12
+BIT_PAIRS = 10  # up to 12
 BATCH_COUNT = 3  # bits duplicater
 
 BITS = BIT_PAIRS * 2
 BATCH_HASH_COUNT = int(512 // BITS)
 BATCH_HASH_SIZE = BIT_PAIRS * BATCH_HASH_COUNT
+
+
 # this generate a shuffled index to take out different combination of bits
 
 def save():
-    print("saving hash table")
+    print(end="saving hash table... ")
     afile = open(hash_file_name, 'wb')
     pickle.dump(hash_map, afile)
     afile.close()
@@ -24,26 +26,30 @@ def save():
     afile = open(id_file_name, 'wb')
     pickle.dump(id_map, afile)
     afile.close()
+    print(f"{len(hash_map)} hashs, {len(id_map)} videos")
+
 
 def load():
-    print("loading hash table")
+    print(end="loading hash table...")
     global hash_map, id_map
     try:
-        hash_map=pickle.load(open(hash_file_name))
+        hash_map = pickle.load(open(hash_file_name, "rb"))
     except FileNotFoundError:
-        hash_map={}
+        hash_map = {}
     try:
-        id_map=pickle.load(open(id_file_name))
+        id_map = pickle.load(open(id_file_name, "rb"))
     except FileNotFoundError:
-        id_map={}
+        id_map = {}
+    print(f"{len(hash_map)} hashs, {len(id_map)} videos")
 
 
 def reset():
     print("reset hash table")
     global hash_map, id_map
-    hash_map={}
-    id_map={}
+    hash_map = {}
+    id_map = {}
     save()
+
 
 random.seed(0)
 r_index = []

@@ -22,7 +22,7 @@ def scan_references(references, second):
             if vv[2] < 0.2:
                 if vv[1] > 7.0:
                     print(
-                        f"at {ptime(vv[0])}-{ptime(second)}({ptime(second - vv[0])}) found in video nr.{k} at {ptime(kk)} ")
+                        f"at {ptime(vv[0])}-{ptime(second)}({ptime(second - vv[0])}) sequence found in video nr.{k} at {ptime(kk)} ")
                     ttime += second - vv[0]
                     tmatches += 1
                 del references[k][kk]
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     nomatch_c = 0
     check_evey_n_frame = int(fps * 2 / 3)
 
-    print(f"check every {check_evey_n_frame} frame")
+    print(f"check every {check_evey_n_frame} frames")
 
     second = 0
     for i in tqdm.tqdm(range(int(frame_count))):
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
             dat = check(frame1, regions, model).flatten()
             hashs = generate_hashs(dat).flatten()
-            best, fids = find_hashs(hashs)
+            fids = find_hashs(hashs)
             nomatch_c += 1
             scan_references(references, second)
 
@@ -100,9 +100,9 @@ if __name__ == "__main__":
 
     real_duration=time.time() - start
     virtual_duration=frame_count / fps
-    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
+    print(f"\n{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
 
     while references:
         scan_references(references, second)
 
-    print(f"\nfound: {tmatches} video segments with total time:{ptime(ttime)}  ")
+    print(f"found: {tmatches} video segments with total time:{ptime(ttime)}")
