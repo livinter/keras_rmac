@@ -42,7 +42,7 @@ if __name__ == "__main__":
     flag, frame = cap.read()
     fps = cap.get(cv2.CAP_PROP_FPS)
     frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-    print(f"processing with {1./args.frequency:.2f} FPS hashs")
+    print(f"processing with one hash every {args.frequency:.2f} second")
     for i in tqdm.tqdm(range(int(frame_count))):
         flag, frame1 = cap.read()
         if not flag:
@@ -54,6 +54,6 @@ if __name__ == "__main__":
 
     real_duration=time.time() - start
     virtual_duration=frame_count / fps
-    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
+    print(f"Trained in {ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
     rmac_hash.id_map.update({next_id:args.source})
     rmac_hash.save()

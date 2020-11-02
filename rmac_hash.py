@@ -83,7 +83,7 @@ def store_hashs(hashs, id1, id2):
             hash_map[hash_] = [id_]
 
 
-def find_hashs(hashs, frame_sensitivity=30):
+def find_hashs(hashs, frame_sensitivity):
     d = {}
     used_hashs = 0
     for n in hashs:
