@@ -2,7 +2,7 @@ import tensorflow as tf
 gpus = tf.config.experimental.list_physical_devices('GPU')
 for gpu in gpus:
     tf.config.experimental.set_memory_growth(gpu, True)
-import time
+
 from tensorflow.keras.layers import Lambda, Dense, TimeDistributed, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing import image
@@ -17,6 +17,8 @@ import numpy as np
 import utils
 
 SIZE = 512
+s_x, s_y, s_c = 224, 224, 3
+
 K.set_image_data_format('channels_first')
 
 
@@ -35,7 +37,7 @@ def weighting(input):
 def rmac(input_shape, num_rois):
     # Load VGG16
     #    vgg16_model = VGG16('', input_shape)
-    vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(3, 224, 224),
+    vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(s_c, s_y, s_x),
                         pooling=None, classes=1000)
     # Regions as input
     in_roi = Input(shape=(num_rois, 4), name='input_roi')
@@ -79,7 +81,6 @@ def rmac(input_shape, num_rois):
     return model
 
 
-s_x, s_y, s_c = 224, 224, 3
 
 
 def check(img, regions, model):

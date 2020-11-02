@@ -17,10 +17,12 @@ import utils
 
 K.set_image_data_format('channels_first')
 
+SIZE = 512
+s_x, s_y, s_c = 224, 224, 3
+
 
 def addition(x):
-    sum = K.sum(x, axis=1)
-    return sum
+    return K.sum(x, axis=1)
 
 
 def weighting(input):
@@ -53,8 +55,8 @@ def rmac(input_shape, num_rois):
     # ROI pooling
     layer_name = resnet101_model.layers[-4].name
     layer_output = resnet101_model.layers[-4].output
-    #print("layer name : " + layer_name)
-    #print(layer_output)
+    # print("layer name : " + layer_name)
+    # print(layer_output)
     # print('layer name : ' + vgg16_model.layers[-5].name)
     # print(vgg16_model.layers[-5].output)
     x = RoiPooling([1], num_rois)([layer_output, in_roi])
@@ -87,6 +89,29 @@ def rmac(input_shape, num_rois):
     model.layers[-4].set_weights([w, b])
 
     return model
+
+
+def check(img, regions, model):
+    new_size = (s_y, s_x, 3)
+    img.resize(new_size, refcheck=False)
+    x = image.img_to_array(img[:, :, ::-1])
+    x = np.expand_dims(x, axis=0)
+    x = utils.preprocess_image(x)
+    # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
+    # Compute RMAC vector
+    # print('Extracting RMAC from image...')
+    RMAC = model.predict([x, np.expand_dims(regions, axis=0)])
+    # print('RMAC size: %s' % RMAC.shape[1])
+    return RMAC
+
+
+def load_RMAC():
+    # Load RMAC model
+    Wmap, Hmap = get_size_vgg_feat_map(s_x, s_y)
+    regions = rmac_regions(Wmap, Hmap, s_c)
+    print('Loading RMAC model...')
+    model = rmac((s_c, s_y, s_x), len(regions))
+    return regions, model
 
 
 if __name__ == "__main__":

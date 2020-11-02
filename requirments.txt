@@ -1,5 +1,4 @@
-tensorflow-gpu==2.1.0
+tensorflow-gpu==2.2.0
 numpy
-keras-applications
-keras-preprocessing
+
 cv2
