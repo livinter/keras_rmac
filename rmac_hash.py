@@ -28,8 +28,14 @@ def save():
 def load():
     print("loading hash table")
     global hash_map, id_map
-    hash_map=pickle.load(hash_file_name)
-    id_map=pickle.load(id_file_name)
+    try:
+        hash_map=pickle.load(open(hash_file_name))
+    except FileNotFoundError:
+        hash_map={}
+    try:
+        id_map=pickle.load(open(id_file_name))
+    except FileNotFoundError:
+        id_map={}
 
 
 def reset():

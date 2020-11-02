@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import tensorflow.keras
 
-print(tensorflow.keras.__version__)
+#print(tensorflow.keras.__version__)
 
 from tensorflow.keras.layers import Lambda, Dense, TimeDistributed, Input
 from tensorflow.keras.models import Model
@@ -53,8 +53,8 @@ def rmac(input_shape, num_rois):
     # ROI pooling
     layer_name = resnet101_model.layers[-4].name
     layer_output = resnet101_model.layers[-4].output
-    print("layer name : " + layer_name)
-    print(layer_output)
+    #print("layer name : " + layer_name)
+    #print(layer_output)
     # print('layer name : ' + vgg16_model.layers[-5].name)
     # print(vgg16_model.layers[-5].output)
     x = RoiPooling([1], num_rois)([layer_output, in_roi])

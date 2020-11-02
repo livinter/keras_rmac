@@ -2,6 +2,8 @@ import cv2
 import time
 import tqdm
 import argparse
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 
 from rmac_hash import generate_hashs, find_hashs
 import rmac_hash
@@ -62,7 +64,7 @@ if __name__ == "__main__":
     print(f"check every {check_evey_n_frame} frame")
 
     second = 0
-    for i in tqdm.tqdm(range(frame_count)):
+    for i in tqdm.tqdm(range(int(frame_count))):
         flag, frame1 = cap.read()
         if not flag:
             break
@@ -98,7 +100,7 @@ if __name__ == "__main__":
 
     real_duration=time.time() - start
     virtual_duration=frame_count / fps
-    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {real_duration/virtual_duration:.2f}X")
+    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
 
     while references:
         scan_references(references, second)

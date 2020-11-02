@@ -2,6 +2,9 @@ import cv2
 import time
 import tqdm
 import argparse
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
+
 from rmac_hash import generate_hashs, store_hashs
 import rmac_hash
 from rmac_vgg import check, load_RMAC
@@ -25,7 +28,7 @@ if __name__ == "__main__":
     if args.reset:
         rmac_hash.reset()
     rmac_hash.load()
-    if rmac_hash:
+    if rmac_hash.id_map:
         next_id=max(rmac_hash.id_map.keys())+1
     else:
         next_id=1
@@ -39,8 +42,8 @@ if __name__ == "__main__":
     flag, frame = cap.read()
     fps = cap.get(cv2.CAP_PROP_FPS)
     frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-    print(f"processing with {1./args.frequency:.2f FPS} hashs")
-    for i in tqdm.tqdm(range(frame_count)):
+    print(f"processing with {1./args.frequency:.2f} FPS hashs")
+    for i in tqdm.tqdm(range(int(frame_count))):
         flag, frame1 = cap.read()
         if not flag:
             break
@@ -51,6 +54,6 @@ if __name__ == "__main__":
 
     real_duration=time.time() - start
     virtual_duration=frame_count / fps
-    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {real_duration/virtual_duration:.2f}X")
-
+    print(f"{ptime(real_duration)} for a {ptime(virtual_duration)} video. speed: {virtual_duration/real_duration:.2f}X")
+    rmac_hash.id_map.update({next_id:args.source})
     rmac_hash.save()

@@ -42,11 +42,11 @@ def rmac(input_shape, num_rois):
     #    xxx = K.permute_dimensions(vgg16_model.layers[-5].output, (0, 3, 1, 2))
 
     # ROI pooling
-    print('layer name : ' + vgg16_model.layers[-5].name)
-    print(vgg16_model.layers[-5].output)
+    #print('layer name : ' + vgg16_model.layers[-5].name)
+    #print(vgg16_model.layers[-5].output)
     #    print(xxx)
     x = RoiPooling([1], num_rois)([vgg16_model.layers[-5].output, in_roi])
-    print(x)
+    #print(x)
 
     # Normalization
     x = Lambda(lambda x: K.l2_normalize(x, axis=2), name='norm1')(x)
