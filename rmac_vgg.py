@@ -84,7 +84,6 @@ def rmac(input_shape, num_rois):
 
 def check(img, regions, model):
     # Load sample image
-    # file = utils.DATA_DIR + 'sample.jpg'
     # img = image.load_img(file)
 
     # Resize
@@ -93,9 +92,8 @@ def check(img, regions, model):
     new_size = (s_y, s_x, 3)
     # print('Original size: %s, Resized image: %s' %(str(img.size), str(new_size)))
     img.resize(new_size, refcheck=False)
-    # img=np.transpose(img[:,:,::-1],(2,0,1))
     # Mean subtractions
-    x = image.img_to_array(img)
+    x = image.img_to_array(img)  # this change format to col,y,x!!!
     x = np.expand_dims(x, axis=0)
     x = utils.preprocess_image(x)
     # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))

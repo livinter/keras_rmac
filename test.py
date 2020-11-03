@@ -73,7 +73,7 @@ if __name__ == "__main__":
     print(f"check every {check_every_n_frame} frames")
 
     second = 0
-    secuences=[]
+    secuences = []
     for i in tqdm.tqdm(range(int(frame_count))):
         flag, frame1 = cap.read()
         if not flag:
@@ -86,9 +86,9 @@ if __name__ == "__main__":
             nomatch_c += 1
             secuences += scan_streams(streams, second, args.keep)
 
-            for fidk, fidv in fids:
+            for ii, (fidk, fidv) in enumerate(fids):
                 fidk1, fidk2 = fidk
-                if fidk1 in streams:  # other video already in list, find best time-match
+                if fidk1 in streams:  # other video already in list, find best position-to-match
                     found_match = False
                     for kk, vv in streams[fidk1].items():
                         # how far in past is kk.vv[0] vs fid2.second
@@ -98,10 +98,12 @@ if __name__ == "__main__":
                             found_match = True
                             streams[fidk1][kk][1] += fidv * w
                             streams[fidk1][kk][2] += fidv * w
-                    if not found_match:
-                        streams[fidk1][fidk2] = [second, fidv, fidv]
+                    if ii==0: # only open stream on best matching/first in list
+                        if not found_match:
+                            streams[fidk1][fidk2] = [second, fidv, fidv]
                 else:
-                    streams[fidk1] = {fidk2: [second, fidv, fidv]}  # (second, weight_akk, weight_now)
+                    if ii==0: # only open stream on best matching/first in list
+                        streams[fidk1] = {fidk2: [second, fidv, fidv]}  # (second, weight_akk, weight_now)
                 if args.debug:
                     print("frame-match:", fidk1, ptime(fidk2), "at ",
                           ptime(i / fps), " after:", nomatch_c, "frames")

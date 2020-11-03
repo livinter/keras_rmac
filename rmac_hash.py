@@ -103,10 +103,7 @@ def find_hashs(hashs, frame_sensitivity):
         return []
     # compensate ignored hashs
     frame_sensitivity *= len(hashs) / used_hashs
+    # biggest_k = max(d, key=d.get) if d[biggest_k] > frame_sensitivity
 
-    biggest_k = max(d, key=d.get)
-    if d[biggest_k] > frame_sensitivity:
-        # l=[(k,(v/frame_sensitivity)**.25) for k,v in d.items() if v>frame_sensitivity]
-        return [(biggest_k, (d[biggest_k] / frame_sensitivity) ** .25)]
-    else:
-        return []
+    return sorted([(k, (v / frame_sensitivity) ** .25) for k, v in d.items() if v > frame_sensitivity],
+                  key=lambda e: e[1])
