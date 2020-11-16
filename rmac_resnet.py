@@ -9,12 +9,12 @@ import tensorflow.keras.backend as K
 #from keras_applications import resnet
 from tensorflow.keras.applications import resnet
 
-from RoiPooling import RoiPooling
-from get_regions import rmac_regions, get_size_vgg_feat_map
+from .RoiPooling import RoiPooling
+from .get_regions import rmac_regions, get_size_vgg_feat_map
 
 import scipy.io
 import numpy as np
-import utils
+from .utils import PCA_FILE,DATA_DIR,preprocess_image
 
 K.set_image_data_format('channels_first')
 
@@ -79,7 +79,7 @@ def rmac(input_shape, num_rois):
 
     # Load PCA weights
     # todo pca layer is trained by data ???
-    mat = scipy.io.loadmat(utils.DATA_DIR + utils.PCA_FILE)
+    mat = scipy.io.loadmat(DATA_DIR + PCA_FILE)
     b = np.squeeze(mat['bias'], axis=1)
     w = np.transpose(mat['weights'])
     model.layers[-4].set_weights([w, b])
@@ -92,7 +92,7 @@ def check(img, regions, model):
     img.resize(new_size, refcheck=False)
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
-    x = utils.preprocess_image(x)
+    x = preprocess_image(x)
     # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
     # Compute RMAC vector
     # print('Extracting RMAC from image...')
@@ -112,11 +112,11 @@ def load_RMAC():
 
 if __name__ == "__main__":
     # Load sample image
-    file = utils.DATA_DIR + 'sample.jpg'
+    file = DATA_DIR + 'sample.jpg'
     img = image.load_img(file)
 
     # Resize
-    #scale = utils.IMG_SIZE / max(img.size)
+    #scale =  IMG_SIZE / max(img.size)
     # new_size = (int(np.ceil(scale * img.size[0])), int(np.ceil(scale * img.size[1])))
     new_size = (224, 224)
     print('Original size: %s, Resized image: %s' % (str(img.size), str(new_size)))
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     # Mean substraction
     x = image.img_to_array(img)
     #x = np.expand_dims(x, axis=0)
-    x = utils.preprocess_image(x)
+    x = preprocess_image(x)
 
     print('Input data : %s, %s. %s' % (str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
 

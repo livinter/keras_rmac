@@ -2,6 +2,11 @@ import random
 import numpy as np
 import pickle
 
+from pathlib import Path
+import glob
+import cv2
+from .rmac_vgg import check
+
 hash_file_name = r'hash_map.pkl'
 hash_map = {}
 id_file_name = r'file_name.pkl'
@@ -78,7 +83,14 @@ def store_hashs(hashs, id1, id2):
     id_ = (id1, id2)
     for hash_ in hashs:
         if hash_ in hash_map:
-            hash_map[hash_].append(id_)
+            if 0<len(hash_map[hash_])<100:
+                cnt=set()
+                for vid,pos in hash_map[hash_]:
+                    cnt.add(vid)
+                    if len(cnt)>2:
+                        hash_map[hash_] = []
+                else:
+                    hash_map[hash_].append(id_)
         else:
             hash_map[hash_] = [id_]
 
@@ -88,9 +100,9 @@ def find_hashs(hashs, frame_sensitivity):
     used_hashs = 0
     for n in hashs:
         w = len(hash_map.get(n, []))
-        if w < 128:
+        if w < 50:
             used_hashs += 1
-        if 0 < w < 128:
+        if 0 < w < 50:
             ww = 1.  # /(w **0.25)
             for e in hash_map[n]:
                 if e != i:
@@ -107,3 +119,29 @@ def find_hashs(hashs, frame_sensitivity):
 
     return sorted([(k, (v / frame_sensitivity) ** .25) for k, v in d.items() if v > frame_sensitivity],
                   key=lambda e: e[1])
+
+def read_image_collection(directory, regions, model)-> dict:
+    locations_map={}
+    locations_num=1
+    categories = glob.glob(directory)
+    for category in categories:
+        if Path(category).is_dir():
+            locations_map[category.split("/")[-1]]=locations_num
+            for train_file_name in glob.glob(category + "/*"):
+                if train_file_name.lower().split(".")[-1] in ["jpeg", "jpg", "png"]:
+                    frame1 = cv2.imread(train_file_name)
+                    if frame1.shape[-1] == 3:
+                        dat = check(frame1, regions, model).flatten()
+                        hashs = generate_hashs(dat)
+                        store_hashs(hashs, id1=locations_num, id2=1)
+        locations_num += 1
+    return locations_map
+
+def get_image_collection_match(locations_map, frame1, regions, model, threshold=2.):
+    dat = check(frame1, regions, model).flatten()
+    hashs = generate_hashs(dat).flatten()
+    matches= find_hashs(hashs, threshold)
+    if not matches:
+        return 0,"unbekannt"
+    else:
+        return matches[0][0],locations_map[matches[0][0]]

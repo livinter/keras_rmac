@@ -24,7 +24,7 @@ def scan_streams(streams, second, keep_alive):
         for kk, vv in list(v.items()):
             vv[2] *= keep_alive
             if vv[2] < 0.2:
-                if vv[1] > 7.0:
+                if vv[1] > 5.0:
                     print(
                         f"at {ptime(vv[0])}-{ptime(second)}({ptime(second - vv[0])}) sequence found at {ptime(kk)} in ..{rmac_hash.id_map[k][-20:]} tscore{vv[1]:.2f}")
                     sequences.append((second - vv[0], second, k, kk, vv[1]))

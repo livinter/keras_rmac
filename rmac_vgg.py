@@ -10,12 +10,12 @@ from tensorflow.keras.preprocessing import image
 import tensorflow.keras.backend as K
 from tensorflow.keras.applications.vgg16 import VGG16
 
-from RoiPooling import RoiPooling
-from get_regions import rmac_regions, get_size_vgg_feat_map
+from .RoiPooling import RoiPooling
+from .get_regions import rmac_regions, get_size_vgg_feat_map
 
 import scipy.io
 import numpy as np
-import utils
+from .utils import PCA_FILE,DATA_DIR,preprocess_image
 
 SIZE = 512
 s_x, s_y, s_c = 224, 224, 3
@@ -74,15 +74,15 @@ def rmac(input_shape, num_rois):
     model = Model([vgg16_model.input, in_roi], rmac_norm)
 
     # Load PCA weights
-    mat = scipy.io.loadmat(utils.DATA_DIR + utils.PCA_FILE)
+    mat = scipy.io.loadmat(DATA_DIR + PCA_FILE)
     b = np.squeeze(mat['bias'], axis=1)
     w = np.transpose(mat['weights'])
     model.layers[-4].set_weights([w, b])
 
     return model
 
-
-def check(img, regions, model):
+import copy
+def check(img2, regions, model):
     # Load sample image
     # img = image.load_img(file)
 
@@ -91,11 +91,12 @@ def check(img, regions, model):
     # new_size = (int(np.ceil(scale * img.size[0])), int(np.ceil(scale * img.size[1])))
     new_size = (s_y, s_x, 3)
     # print('Original size: %s, Resized image: %s' %(str(img.size), str(new_size)))
+    img = copy.copy(img2)
     img.resize(new_size, refcheck=False)
     # Mean subtractions
     x = image.img_to_array(img)  # this change format to col,y,x!!!
     x = np.expand_dims(x, axis=0)
-    x = utils.preprocess_image(x)
+    x = preprocess_image(x)
     # print('Input data : %s, %s. %s' %(str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
 
     # Compute RMAC vector
@@ -116,7 +117,7 @@ def load_RMAC():
 
 if __name__ == "__main__":
     # Load sample image
-    file = utils.DATA_DIR + 'sample.jpg'
+    file = DATA_DIR + 'sample.jpg'
     img = image.load_img(file)
 
     # Resize
@@ -129,7 +130,7 @@ if __name__ == "__main__":
     # Mean substraction
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
-    x = utils.preprocess_image(x)
+    x = preprocess_image(x)
 
     print('Input data : %s, %s. %s' % (str(x.shape[1]), str(x.shape[2]), str(x.shape[3])))
 
