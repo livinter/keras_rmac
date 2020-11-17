@@ -12,7 +12,7 @@ hash_map = {}
 id_file_name = r'file_name.pkl'
 id_map = {}
 
-BIT_PAIRS = 10  # up to 12
+BIT_PAIRS = 11  # up to 12
 BATCH_COUNT = 3  # bits duplicater
 
 BITS = BIT_PAIRS * 2
@@ -105,11 +105,7 @@ def find_hashs(hashs, frame_sensitivity):
         if 0 < w < 50:
             ww = 1.  # /(w **0.25)
             for e in hash_map[n]:
-                if e != i:
-                    if e in d:
-                        d[e] += ww
-                    else:
-                        d[e] = ww
+                d[e]=d.get(e,0)+ww
 
     if not d:
         return []
@@ -119,6 +115,14 @@ def find_hashs(hashs, frame_sensitivity):
 
     return sorted([(k, (v / frame_sensitivity) ** .25) for k, v in d.items() if v > frame_sensitivity],
                   key=lambda e: e[1])
+
+def sum_up(found_hashs):
+    suma={}
+    for k,v in found_hashs:
+        suma[k]= suma.get(k,0.)+v
+    return sorted([(k,v) for k,v in suma.items()])
+
+
 
 def read_image_collection(directory, regions, model)-> dict:
     locations_map={}
@@ -140,8 +144,8 @@ def read_image_collection(directory, regions, model)-> dict:
 def get_image_collection_match(locations_map, frame1, regions, model, threshold=2.):
     dat = check(frame1, regions, model).flatten()
     hashs = generate_hashs(dat).flatten()
-    matches= find_hashs(hashs, threshold)
+    matches= sum_up(find_hashs(hashs, threshold))
     if not matches:
-        return 0,"unbekannT"
+        return 0,""
     else:
         return matches[0][0][0],locations_map[matches[0][0][0]]
