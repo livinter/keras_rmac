@@ -123,10 +123,10 @@ def find_hashs(hashs, frame_sensitivity):
 def read_image_collection(directory, regions, model)-> dict:
     locations_map={}
     locations_num=1
-    categories = glob.glob(directory)
+    categories = glob.glob(directory+"/*")
     for category in categories:
         if Path(category).is_dir():
-            locations_map[category.split("/")[-1]]=locations_num
+            locations_map[locations_num]=category.split("/")[-1]
             for train_file_name in glob.glob(category + "/*"):
                 if train_file_name.lower().split(".")[-1] in ["jpeg", "jpg", "png"]:
                     frame1 = cv2.imread(train_file_name)
@@ -134,7 +134,7 @@ def read_image_collection(directory, regions, model)-> dict:
                         dat = check(frame1, regions, model).flatten()
                         hashs = generate_hashs(dat)
                         store_hashs(hashs, id1=locations_num, id2=1)
-        locations_num += 1
+            locations_num += 1
     return locations_map
 
 def get_image_collection_match(locations_map, frame1, regions, model, threshold=2.):
@@ -142,6 +142,6 @@ def get_image_collection_match(locations_map, frame1, regions, model, threshold=
     hashs = generate_hashs(dat).flatten()
     matches= find_hashs(hashs, threshold)
     if not matches:
-        return 0,"unbekannt"
+        return 0,"unbekannT"
     else:
-        return matches[0][0],locations_map[matches[0][0]]
+        return matches[0][0][0],locations_map[matches[0][0][0]]
