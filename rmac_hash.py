@@ -70,7 +70,7 @@ def generate_hashs(v):
     s = np.empty((1024,), dtype=np.int64)
     maxv=len(v)
     for ii in range(len(s)):
-        s[ii]=int(v[ii % maxv]<v[random.randint(maxv)])
+        s[ii]=int(v[ii % maxv]<v[random.randint(0,maxv-1)])
     return (np.sum((s[r_index] * r_multi), axis=-1) << 8) + np.arange(len(r_index))
 
 
@@ -140,8 +140,8 @@ def read_image_collection(directory, regions, model)-> dict:
 def get_image_collection_match(locations_map, frame1, regions, model, threshold=10.):
     dat = check(frame1, regions, model).flatten()
     hashs = generate_hashs(dat).flatten()
-    matches= sum_up(find_hashs(hashs, threshold/4))
-    if not matches or matches[0][1]<threshold:
+    matches= sum_up(find_hashs(hashs, threshold))
+    if not matches: # or matches[0][1]<threshold:
         return 0,""
     else:
         return matches[0][0][0],locations_map[matches[0][0][0]]
