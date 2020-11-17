@@ -12,8 +12,8 @@ hash_map = {}
 id_file_name = r'file_name.pkl'
 id_map = {}
 
-BIT_PAIRS = 11  # up to 12
-BATCH_COUNT = 3  # bits duplicater
+BIT_PAIRS = 12  # up to 12
+BATCH_COUNT = 5  # bits duplicater
 
 BITS = BIT_PAIRS * 2
 BATCH_HASH_COUNT = int(512 // BITS)
@@ -114,13 +114,13 @@ def find_hashs(hashs, frame_sensitivity):
     # biggest_k = max(d, key=d.get) if d[biggest_k] > frame_sensitivity
 
     return sorted([(k, (v / frame_sensitivity) ** .25) for k, v in d.items() if v > frame_sensitivity],
-                  key=lambda e: e[1])
+                  key=lambda e: e[1], reverse=True)
 
 def sum_up(found_hashs):
     suma={}
     for k,v in found_hashs:
         suma[k]= suma.get(k,0.)+v
-    return sorted([(k,v) for k,v in suma.items()])
+    return sorted([(k,v) for k,v in suma.items()], reverse=True)
 
 
 
@@ -141,11 +141,11 @@ def read_image_collection(directory, regions, model)-> dict:
             locations_num += 1
     return locations_map
 
-def get_image_collection_match(locations_map, frame1, regions, model, threshold=2.):
+def get_image_collection_match(locations_map, frame1, regions, model, threshold=10.):
     dat = check(frame1, regions, model).flatten()
     hashs = generate_hashs(dat).flatten()
-    matches= sum_up(find_hashs(hashs, threshold))
-    if not matches:
+    matches= sum_up(find_hashs(hashs, threshold/4))
+    if not matches or matches[0][1]<threshold:
         return 0,""
     else:
         return matches[0][0][0],locations_map[matches[0][0][0]]
