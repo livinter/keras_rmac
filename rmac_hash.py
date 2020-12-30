@@ -13,9 +13,10 @@ id_file_name = r'file_name.pkl'
 id_map = {}
 
 BITS = 24        # up to 12
-BATCH_COUNT = 5  # bits duplicater
+BATCH_COUNT = 10  # bits duplicater
 
-BATCH_HASH_COUNT = int(1024 // BITS)
+SIZE=2048
+BATCH_HASH_COUNT = int(SIZE // BITS)
 BATCH_HASH_SIZE = BITS * BATCH_HASH_COUNT
 
 
@@ -58,7 +59,7 @@ def reset():
 random.seed(0)
 r_index = []
 for i in range(BATCH_COUNT):
-    r1 = list(range(1024))
+    r1 = list(range(SIZE))
     random.shuffle(r1)
     r_index.append(np.array(r1[:BATCH_HASH_SIZE], dtype=np.int32).reshape(BATCH_HASH_COUNT, BITS))
 r_index = np.concatenate(r_index)
@@ -67,7 +68,7 @@ r_multi = [2 ** e for e in np.arange(BITS)]
 
 def generate_hashs(v):
     random.seed(0)
-    s = np.empty((1024,), dtype=np.int64)
+    s = np.empty((SIZE,), dtype=np.int64)
     maxv=len(v)
     for ii in range(len(s)):
         s[ii]=int(v[ii % maxv]<v[random.randint(0,maxv-1)])

@@ -20,7 +20,7 @@ from .utils import PCA_FILE,DATA_DIR,preprocess_image
 SIZE = 512
 s_x, s_y, s_c = 224, 224, 3
 
-K.set_image_data_format('channels_first')
+K.set_image_data_format('channels_last')
 
 
 def addition(x):
@@ -38,7 +38,7 @@ def weighting(input):
 def rmac(input_shape, num_rois):
     # Load VGG16
     #    vgg16_model = VGG16('', input_shape)
-    vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(s_c, s_y, s_x),
+    vgg16_model = VGG16(include_top=True, weights='imagenet', input_tensor=None, input_shape=(s_y, s_x, s_c),
                         pooling=None, classes=1000)
     # Regions as input
     in_roi = Input(shape=(num_rois, 4), name='input_roi')
@@ -111,7 +111,7 @@ def load_RMAC():
     Wmap, Hmap = get_size_vgg_feat_map(s_x, s_y)
     regions = rmac_regions(Wmap, Hmap, s_c)
     print('Loading RMAC model...')
-    model = rmac((s_c, s_y, s_x), len(regions))
+    model = rmac((s_y, s_x, s_c), len(regions))
     return regions, model
 
 
