@@ -1,6 +1,6 @@
 import pickle
 
-DATA_DIR = 'data/'
+DATA_DIR = 'keras_rmac/data/'
 WEIGHTS_FILE = 'vgg16_weights_th_dim_ordering_th_kernels.h5'
 PCA_FILE = 'PCAmatrices.mat'
 IMG_SIZE = 1024
